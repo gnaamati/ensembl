@@ -143,10 +143,10 @@ sub resubmit_exonerate {
 
   chmod 0755, $exe_file;
 
-  my $queue = $self->mapper->farm_queue || 'normal';
+  my $queue = $self->mapper->farm_queue;
   
-  my $usage = '-M 1500 -R"select[mem>1500] rusage[tmp='.$disk_space_needed.', mem=1500]" -J "'.$unique_name.'" -q '.$queue;
-
+    my $usage = '-M 1500 -R"select[mem>1500] rusage[tmp='.$disk_space_needed.', mem=1500]" -J "'.$unique_name.'"';
+  $queue and $usage .=  ' -q '. $queue;
 
   my $com = "bsub $usage -o $root_dir/$outfile -e $root_dir/$errfile ".$exe_file;
 
@@ -284,11 +284,11 @@ EON
 
   my $output = $self->get_class_name() . "_" . $ensembl_type . "_" . "\$LSB_JOBINDEX.map";
 
-  my $queue = $self->mapper->farm_queue || 'normal';
+  my $queue = $self->mapper->farm_queue;
 
 
-  my $usage = "-q $queue ".'-M 1500 -R"select[mem>1500] rusage[tmp='.$disk_space_needed.', mem=1500]" '.'-J "'.$unique_name.'[1-'.$num_jobs.']%200" -o '.$prefix.'.%J-%I.out -e  '.$prefix.'.%J-%I.err';
-
+  my $usage = '-M 1500 -R"select[mem>1500] rusage[tmp='.$disk_space_needed.', mem=1500]" '.'-J "'.$unique_name.'[1-'.$num_jobs.']%200" -o '.$prefix.'.%J-%I.out -e  '.$prefix.'.%J-%I.err';
+  $queue and $usage = "-q $queue " . $usage;
 
   my $command = $exe." ".$query." ".$target.' --querychunkid $LSB_JOBINDEX --querychunktotal '.$num_jobs.' --showvulgar false --showalignment FALSE --ryo "xref:%qi:%ti:%ei:%ql:%tl:%qab:%qae:%tab:%tae:%C:%s\n" '.$options_str;
   $command .= " | grep '^xref' > $root_dir/$output";
