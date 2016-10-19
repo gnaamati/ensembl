@@ -88,7 +88,8 @@ sub run_script {
   } else {
       $registry->load_registry_from_multiple_dbs( 
       {
-        '-host'    => 'ens-staging3',
+        '-host'    => 'mysql-ens-sta-1.ebi.ac.uk',
+	'-port'    => 4519,
         '-user'    => 'ensro',
       },
       );
