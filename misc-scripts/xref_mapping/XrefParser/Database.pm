@@ -98,8 +98,11 @@ sub dbi
     my $dbi;
 
     if ( !defined $dbi || !$dbi->ping() ) {
-        my $connect_string =
-          sprintf( "dbi:mysql:host=%s;port=%s;database=%s",
+        my $connect_string = 
+          # enable local load data feature as the underlying C client library 
+	  # might have been built with this off
+	  # ChecksumParser needs it
+          sprintf( "dbi:mysql:host=%s;port=%s;database=%s;mysql_local_infile=1",
             $self->host, $self->port, $self->dbname );
 
         $dbi =
