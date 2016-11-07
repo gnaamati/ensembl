@@ -34,6 +34,17 @@ use strict;
 
 use base 'Bio::EnsEMBL::DBSQL::Driver';
 
+# enable local load data ability as this might be turned off
+# at the level of the underlying C client library
+sub connect_params {
+    my ($self, $conn) = @_;
+
+    my $return = $self->SUPER::connect_params($conn);
+    $return->{mysql_local_infile} = 1;
+    
+    return $return;
+}
+
 sub from_date_to_seconds {
     my ($self, $column) = @_;
     return "UNIX_TIMESTAMP($column)";
